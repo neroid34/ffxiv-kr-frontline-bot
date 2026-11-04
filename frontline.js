@@ -45,7 +45,15 @@ function formatMessage(dayNumber, label = "오늘") {
   const [ko, en] = ROTATION[slotFor(dayNumber)];
   const d = new Date(dayNumber * DAY_MS); // UTC로 읽으면 그 날짜 그대로
   const date = `${d.getUTCMonth() + 1}/${d.getUTCDate()} ${WEEKDAYS[d.getUTCDay()]}`;
-  return `⚔️ ${label}의 전장 (${date})\n${ko}\n${en}`;
+  return `${label}의 전장 (${date})\n${ko}\n${en}`;
+}
+
+// 스킬 요청 본문에서 발화를 꺼냄. 실제 채팅은 userRequest.utterance 에 들어오고,
+// 오픈빌더 스킬 테스트 화면은 action.params.utterance 에만 입력값이 들어가므로 둘 다 본다.
+function extractUtterance(body) {
+  return [body?.userRequest?.utterance, body?.action?.params?.utterance]
+    .filter((v) => typeof v === "string")
+    .join(" ");
 }
 
 // 카카오 스킬 응답. 발화에 '내일'이 있으면 내일 전장, 아니면 오늘 전장.
@@ -55,4 +63,4 @@ function buildResponse(utterance, now = new Date()) {
   return { version: "2.0", template: { outputs: [{ simpleText: { text } }] } };
 }
 
-module.exports = { ROTATION, EPOCH_OFFSET_DAYS, kstDayNumber, slotFor, formatMessage, buildResponse };
+module.exports = { ROTATION, EPOCH_OFFSET_DAYS, kstDayNumber, slotFor, formatMessage, extractUtterance, buildResponse };

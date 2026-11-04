@@ -2,7 +2,7 @@
 //   POST /skill  : 오픈빌더가 호출하는 스킬 엔드포인트
 //   GET  /health : 상태 확인
 const http = require("http");
-const { buildResponse } = require("./frontline");
+const { buildResponse, extractUtterance } = require("./frontline");
 
 function send(res, status, payload) {
   const body = JSON.stringify(payload);
@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
   req.on("end", () => {
     let utterance = "";
     try {
-      utterance = JSON.parse(raw || "{}").userRequest?.utterance ?? "";
+      utterance = extractUtterance(JSON.parse(raw || "{}"));
     } catch {
       // 파싱 실패 시 빈 발화로 처리 → 오늘 전장 응답
     }

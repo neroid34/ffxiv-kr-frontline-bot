@@ -30,6 +30,23 @@ test("'내일' 발화는 내일 전장", () => {
   assert.match(text, /내일의 전장 \(11\/5 목\)/);
 });
 
+test("오픈빌더 스킬 테스트 화면 요청: userRequest.utterance 는 기본값, 입력값은 action.params 에만 있음", () => {
+  const body = {
+    userRequest: { utterance: "발화 내용" },
+    action: { params: { utterance: "내일 전장" }, detailParams: { utterance: { origin: "내일 전장", value: "내일 전장" } } },
+  };
+  const text = f.buildResponse(f.extractUtterance(body), kst(2026, 11, 4)).template.outputs[0].simpleText.text;
+  assert.match(text, /내일의 전장 \(11\/5 목\)/);
+});
+
+test("실제 채팅 요청(action.params 없음)과 빈 본문 처리", () => {
+  assert.strictEqual(f.extractUtterance({ userRequest: { utterance: "내일 전장" } }), "내일 전장");
+  assert.strictEqual(f.extractUtterance({}), "");
+  assert.strictEqual(f.extractUtterance(undefined), "");
+  const text = f.buildResponse(f.extractUtterance({ userRequest: { utterance: "오늘 전장" } }), kst(2026, 11, 4)).template.outputs[0].simpleText.text;
+  assert.match(text, /오늘의 전장 \(11\/4 수\)/);
+});
+
 test("카카오 응답 형식", () => {
   const r = f.buildResponse("", kst(2026, 11, 4));
   assert.strictEqual(r.version, "2.0");
