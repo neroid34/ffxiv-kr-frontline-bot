@@ -56,11 +56,18 @@ function extractUtterance(body) {
     .join(" ");
 }
 
+// 응답 아래에 붙는 선택 버튼(퀵리플라이). 누르면 messageText 가 사용자 발화로 전송되어
+// 기존 시나리오 블록(발화 '오늘 전장', '내일 전장')이 그대로 동작한다.
+const QUICK_REPLIES = [
+  { label: "오늘 전장", action: "message", messageText: "오늘 전장" },
+  { label: "내일 전장", action: "message", messageText: "내일 전장" },
+];
+
 // 카카오 스킬 응답. 발화에 '내일'이 있으면 내일 전장, 아니면 오늘 전장.
 function buildResponse(utterance, now = new Date()) {
   const tomorrow = (utterance || "").includes("내일");
   const text = formatMessage(kstDayNumber(now, tomorrow ? 1 : 0), tomorrow ? "내일" : "오늘");
-  return { version: "2.0", template: { outputs: [{ simpleText: { text } }] } };
+  return { version: "2.0", template: { outputs: [{ simpleText: { text } }], quickReplies: QUICK_REPLIES } };
 }
 
 module.exports = { ROTATION, EPOCH_OFFSET_DAYS, kstDayNumber, slotFor, formatMessage, extractUtterance, buildResponse };

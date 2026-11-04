@@ -47,6 +47,19 @@ test("실제 채팅 요청(action.params 없음)과 빈 본문 처리", () => {
   assert.match(text, /오늘의 전장 \(11\/4 수\)/);
 });
 
+test("응답에 오늘/내일 퀵리플라이 버튼 포함, 버튼 문구는 발화 규칙과 일치", () => {
+  const r = f.buildResponse("오늘 전장", kst(2026, 11, 4));
+  const qr = r.template.quickReplies;
+  assert.deepStrictEqual(qr.map((q) => q.label), ["오늘 전장", "내일 전장"]);
+  for (const q of qr) {
+    assert.strictEqual(q.action, "message");
+    assert.ok(q.label.length <= 14, "퀵리플라이 label 은 14자 이내");
+  }
+  // 버튼을 누르면 messageText 가 발화로 들어오므로 각각 오늘/내일 응답이 나와야 함
+  assert.match(f.buildResponse(qr[0].messageText, kst(2026, 11, 4)).template.outputs[0].simpleText.text, /오늘의 전장/);
+  assert.match(f.buildResponse(qr[1].messageText, kst(2026, 11, 4)).template.outputs[0].simpleText.text, /내일의 전장/);
+});
+
 test("카카오 응답 형식", () => {
   const r = f.buildResponse("", kst(2026, 11, 4));
   assert.strictEqual(r.version, "2.0");
