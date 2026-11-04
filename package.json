@@ -1,0 +1,11 @@
+{
+  "name": "ffxiv-frontline-bot",
+  "version": "1.0.0",
+  "description": "FFXIV 오늘의 전장 카카오톡 챗봇 (카카오 i 오픈빌더 스킬 서버)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "engines": { "node": ">=18" }
+}
