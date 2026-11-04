@@ -45,7 +45,7 @@ function formatMessage(dayNumber, label = "오늘") {
   const [ko, en] = ROTATION[slotFor(dayNumber)];
   const d = new Date(dayNumber * DAY_MS); // UTC로 읽으면 그 날짜 그대로
   const date = `${d.getUTCMonth() + 1}/${d.getUTCDate()} ${WEEKDAYS[d.getUTCDay()]}`;
-  return `${label}의 전장 (${date})\n${ko}\n${en}`;
+  return `${label}의 전장 (${date})\n${ko}`;
 }
 
 // 스킬 요청 본문에서 발화를 꺼냄. 실제 채팅은 userRequest.utterance 에 들어오고,
